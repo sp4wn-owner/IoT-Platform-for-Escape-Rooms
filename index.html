@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>IoT Platform</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+  </head>
+
+  <body>
+    
+    <header>
+      <div id="toplinkbar" class="top-link-bar">
+        <ul>
+          <li><a href="#" class="header-icons" id="rm1-icon" onclick="toggleroom('room1')">Room 1</a></li>
+          <li><a href="#" class="header-icons" id="rm2-icon" onclick="toggleroom('room2')">Room 2</i></a></li>          
+          <li><a href="#" class="header-icons" id="rm3-icon" onclick="toggleroom('room3')">Room 3</a></li>        
+        </ul>
+      </div>
+    </header> 
+
+    <div id="login-page">
+        <div id="introtext" class="text-container"></div>
+        <div class="login-container">
+          <div class="login-form">
+            <h1>Login</h1>
+            <div class="form-group">
+              <label>Username</label>
+              <input type="text" id="usernameinput" maxlength="10" placeholder="any name will do">
+            </div>
+            <button class="main-btn" id="loginBtn">Login</button>
+          </div>
+        </div>
+    </div>
+
+    <div id="rooms-container">
+        <div id="room1">
+            <h1>Room 1</h1>
+            <span id="room1span">All devices offline</span>
+            <div id="room1devices" class="devices-container"></div>
+        </div>    
+        <div id="room2">           
+            <h1>Room 2</h1>
+            <span id="room2span">All devices offline</span>
+            <div id="room2devices" class="devices-container"></div>      
+        </div>
+        <div id="room3">
+            <h1>Room 3</h1>
+            <span id="room3span">All devices offline</span>
+            <div id="room3devices" class="devices-container"></div>
+        </div>
+    </div>
+      
+      
+  </body>
+  <script src="scripts/client.js"></script>
+</html>
