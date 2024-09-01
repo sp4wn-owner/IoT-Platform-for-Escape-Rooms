@@ -1,4 +1,5 @@
-const url = 'ws://73.52.112.32:4444';
+const url = 'ws://10.0.0.211:4444';
+//const url = 'ws://73.52.112.32:4444';
 
 let username;
 let roomname;
@@ -129,9 +130,6 @@ function toggleroom(room) {
 }
 
 function getDevices(room) {
-    devicescontainer.forEach(devicescontainer => {
-        devicescontainer.innerHTML = "";
-     });
      
     send({
         type: "getdevices",
@@ -141,13 +139,18 @@ function getDevices(room) {
 
 
 function handleDevices(devices) {
+    devicescontainer.forEach(devicescontainer => {
+        devicescontainer.innerHTML = "";
+     });
     const premadeDivTemplate = `
         <div class="device-info-container">
             <div class="form-group-devices">
                 <span class="pin-number"></span>
-                <div class="toggle-container">
-                    <input type="checkbox" class="toggle-button">
-                    <label class="toggle-label"></label>
+                <div class="device-toggle-container">
+                    <div class="toggle-container">
+                        <input type="checkbox" class="toggle-button">
+                        <label class="toggle-label"></label>
+                    </div>
                 </div>
             </div>                
         </div>`;

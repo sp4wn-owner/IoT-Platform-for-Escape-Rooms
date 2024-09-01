@@ -146,7 +146,7 @@ button:hover {
     display: inline-block;
     box-shadow: #888;
     padding: 15px;
-    margin: 10px;
+    margin: 20px;
     background-color: lightgrey;
     cursor: pointer;
     border: 1px solid;
@@ -160,10 +160,11 @@ button:hover {
     font-weight: bold;
     color: black;
     font-size: 25px;
-    padding: 10px;
+    padding: 15px 5px;
     text-decoration: none;
     text-transform: uppercase;  
     text-wrap: wrap; 
+    
 }
 .device-info-container {
     display: inline-block;
@@ -171,14 +172,19 @@ button:hover {
     width: 100%;
 }
 
+.device-toggle-container {
+    margin: 0 auto;
+}
+
 .device-info-container span {
+    margin: 0 auto;
     width: 60px;
     font-size: 20px;
     
 }
 .form-group-devices {
     display: grid;                  
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 1fr;
     align-items: center; 
     padding: 2px;
 }
@@ -227,6 +233,17 @@ button:hover {
     transform: translateX(30px);
 }
 
+@media screen and (max-width:800px) {
+
+    #login-header {
+        height: 5%;
+    }
+    .device-container {        
+        width: 40%;
+        margin: 20px;
+    }
+    
+}
 
 @media screen and (max-width:600px) {
     .login-container {
@@ -240,8 +257,8 @@ button:hover {
         height: 5%;
     }
     .device-container {        
-        width: 40%;
-        margin: 0 5px;
+        width: 80%;
+        margin-bottom: 25px;
     }
     
 }

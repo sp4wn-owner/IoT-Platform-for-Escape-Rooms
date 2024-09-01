@@ -3,12 +3,12 @@
 #include <ArduinoJson.h>
 
 // Configuration
-const char* ssid = "Rm117"; // Enter SSID
-const char* password = "Huskies1337$"; // Enter Password
+const char* ssid = ""; // Enter SSID
+const char* password = ""; // Enter Password
 const char* websockets_server_host = "10.0.0.211"; // Enter server address
 const uint16_t websockets_server_port = 4444; // Enter server port
-const char* hostname = "ESP32SocketClient";
-const char* room = "room1";
+const char* hostname = "ESP32_1"; //set device name
+const char* room = "room1"; //set room
 
 using namespace websockets;
 
@@ -27,6 +27,7 @@ void turnOffAllPins();
 void turnOnAllPins();
 void sendStatusToServer(int pin, bool state);
 String createJsonString(const String& type, const String& name, const String& room);
+void onWebSocketEvent(WebsocketsEvent event, String data);
 
 
 // Connection status
@@ -46,6 +47,7 @@ void setup() {
 
     // Run callback when messages are received
     client.onMessage(handleMessage);
+    client.onEvent(onWebSocketEvent);
 }
 
 void loop() {
@@ -193,4 +195,27 @@ String createJsonString(const String& type, const String& name, const String& ro
            "\"name\":\"" + name + "\"," +
            "\"room\":\"" + room + "\"" +
            "}";
+}
+
+// Function to handle WebSocket events
+void onWebSocketEvent(WebsocketsEvent event, String data) {
+    switch (event) {
+        case WebsocketsEvent::ConnectionOpened:
+            Serial.println("WebSocket connection opened.");
+            connected = true;
+            break;
+        case WebsocketsEvent::ConnectionClosed:
+            Serial.println("WebSocket connection closed.");
+            connected = false;
+            reconnectWebSocket()
+            break;
+        case WebsocketsEvent::ConnectionError:
+            Serial.println("WebSocket connection error.");
+            connected = false;
+            reconnectWebSocket()
+            break;
+        default:
+            Serial.println("WebSocket event: " + data);
+            break;
+    }
 }

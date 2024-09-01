@@ -25,7 +25,7 @@ const checkClients = () => {
 };
 
 // Set up a heartbeat to check clients every 5 seconds
-const interval = setInterval(checkClients, 5000);
+const interval = setInterval(checkClients, 2000);
 
 wss.on('connection', function(connection) {
     console.log("device/user connected");
@@ -64,18 +64,23 @@ wss.on('connection', function(connection) {
                 break;
 
             case 'connect':
+                console.log("device connected", data.name);
                 if(devices[data.name]) {
                     devices[data.name] = connection;
                     connection.name = data.name;
+                    connection.rooom = data.room;
                     connection.type = 'device';
                     
                 } else {
                     devices[data.name] = connection;
                     connection.name = data.name;
                     connection.type = 'device';
+                    connection.rooom = data.room;
                     addDevice(data.name, data.room);
                     console.log("device added: ", data.name);
                 }
+
+                sendDevices(data.room);
                 
                 break;
 
@@ -132,26 +137,49 @@ wss.on('connection', function(connection) {
 
     connection.on("close", function() {
         if(connection.name) {
-            console.log(connection.type)
             if(connection.type == 'user') {
                 console.log("On Close - deleting user: ", connection.name);
-                for(let i=0; i < devices.length; i++) {
-                    dconn = devices[i];
+                // Convert object to array of device objects
+                let devicesArray = Object.keys(devices).map(key => ({
+                    name: key,
+                    ...devices[key]
+                }));
+                devicesArray.forEach(device => {
+                    let dconn = devices[device.name];  // Set dconn to the name of the device
                     sendTo(dconn, {
                         command: "OFF_ALL"
                     });    
-                }
+                  });
+                
                 delete users[connection.name];  
             } if(connection.type == 'device') {
                 console.log("On Close - deleting device", connection.name);
-                // Remove all devices related to this user
-                for (let deviceKey in devices) {
-                    let dconn = devices[deviceKey];
-                    if (dconn.name === connection.name) {
-                        // Optionally send a command to the device                        
-                        delete devices[deviceKey]; // Delete the device from the devices object
-                    }
-                }
+                
+                let usersArray = Object.keys(users).map(key => ({
+                    name: key,
+                    ...users[key]
+                }));
+                usersArray.forEach(user => {
+                    let userconn = users[user.name];  // Set conn to the name of the user
+
+                    for (let deviceKey in devices) {
+                        let dconn = devices[deviceKey];
+                        if (dconn.name === connection.name) {
+                            //let a = dconn.room;
+                            let devicesByRoom = getDevicesByFieldValue(devices, "room", connection.rooom);
+
+                            // Optionally send a command to the device    
+                            sendTo(userconn, {
+                                type: "devices",                  
+                                devices: devicesByRoom
+                            });                       
+                            delete devices[deviceKey]; // Delete the device from the devices object
+                        }
+                    }                    
+                
+                });
+                // Remove all items related to this device
+                
                 delete devices[connection.name]; 
             } 
            // clearInterval(interval);                   
@@ -190,3 +218,21 @@ function addDevice(name, room) {
     counter++; 
 }
 
+function sendDevices(room) {
+    let usersArray = Object.keys(users).map(key => ({
+        name: key,
+        ...users[key]
+    }));
+    usersArray.forEach(user => {
+        let userconn = users[user.name];  // Set conn to the name of the user
+
+        //let a = dconn.room;
+        let devicesByRoom = getDevicesByFieldValue(devices, "room", room);
+
+        // Optionally send a command to the device    
+        sendTo(userconn, {
+            type: "devices",                  
+            devices: devicesByRoom
+        });                  
+    });
+}
