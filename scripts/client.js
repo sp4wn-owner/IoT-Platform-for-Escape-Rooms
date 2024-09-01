@@ -42,7 +42,7 @@ conn.onmessage = function (msg) {
             break;
         
         case "toggle":
-            handleToggle(data.success, data.name, data.pin);
+            handleToggle(data.state, data.id);
             break;         
        
         case "leave":
@@ -210,7 +210,6 @@ function handleToggleChange(toggle) {
     console.log(`Toggle button with ID ${toggle.id} changed to ${toggle.checked}`);
     let deviceName = toggle.getAttribute('data-device-name');
     let pin = toggle.getAttribute('data-pin-number');
-    console.log(pin);
     
     send({
         type: 'toggle',
@@ -219,16 +218,18 @@ function handleToggleChange(toggle) {
         devicename: deviceName,
         pin: pin,
         id: toggle.id,
-        checked: toggle.checked
+        state: toggle.checked
     });
 }
 
-function handleToggle(success, name, pin) {
-    if (success === false) {
-       console.log("toggle off: " + name + ":" + pin);
-       setToggleState(pin, false);
-    } else {
-       console.log("toggle worked");           
+function handleToggle(state, id) {
+    if (state === false) {
+        console.log("toggle off: " + id);
+        setToggleState(id, false);
+        console.log(id+": is off"); 
+    } else if (state === true) {
+        setToggleState(id, true);
+       console.log(id+": is on");           
      }
 };
 
