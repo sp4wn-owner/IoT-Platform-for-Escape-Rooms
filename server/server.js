@@ -13,7 +13,7 @@ const handlePing = (ws) => {
 
 // Function to check clients' activity
 const checkClients = () => {
-    console.log('Heartbeat check');
+    //console.log('Heartbeat check');
     wss.clients.forEach((ws) => {
         if (ws.isAlive === false) {
             console.log('Client terminated');
