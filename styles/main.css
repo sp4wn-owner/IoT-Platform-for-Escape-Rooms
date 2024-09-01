@@ -151,17 +151,19 @@ button:hover {
     cursor: pointer;
     border: 1px solid;
     box-shadow: 5px 10px;
-    width: 15%;
+    width: 24%;
 }
 
 .device-container-name {
+    overflow-wrap: break-word;
     font-family: monospace;
     font-weight: bold;
     color: black;
-    font-size: 35px;
+    font-size: 25px;
     padding: 10px;
     text-decoration: none;
-    text-transform: uppercase;   
+    text-transform: uppercase;  
+    text-wrap: wrap; 
 }
 .device-info-container {
     display: inline-block;
@@ -171,12 +173,14 @@ button:hover {
 
 .device-info-container span {
     width: 60px;
+    font-size: 20px;
     
 }
 .form-group-devices {
     display: grid;                  
     grid-template-columns: 1fr auto;
     align-items: center; 
+    padding: 2px;
 }
 .toggle-container {
     position: relative;
@@ -230,10 +234,14 @@ button:hover {
         margin: 8% auto;
     }
     .header-icons {
-        font-size: 25px;
+        font-size: 20px;
     }
     #login-header {
         height: 5%;
+    }
+    .device-container {        
+        width: 40%;
+        margin: 0 5px;
     }
     
 }

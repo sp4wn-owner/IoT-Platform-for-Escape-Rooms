@@ -1,15 +1,38 @@
 var WebSocketServer = require('ws').Server;
 
-var wss = new WebSocketServer({port: 8080});
+var wss = new WebSocketServer({port: 4444});
 
 let users = {};
 let devices = {};
 let counter = 1;
 
+// Function to handle ping responses
+const handlePing = (ws) => {
+    ws.isAlive = true;
+};
+
+// Function to check clients' activity
+const checkClients = () => {
+    console.log('Heartbeat check');
+    wss.clients.forEach((ws) => {
+        if (ws.isAlive === false) {
+            console.log('Client terminated');
+            return ws.terminate();
+        }
+        ws.isAlive = false;
+        ws.ping();
+    });
+};
+
+// Set up a heartbeat to check clients every 5 seconds
+const interval = setInterval(checkClients, 5000);
+
 wss.on('connection', function(connection) {
     console.log("device/user connected");
+    connection.isAlive = true;
 
     connection.on('message', function(message) {
+
         var data;
         try {
             data = JSON.parse(message);
@@ -41,23 +64,19 @@ wss.on('connection', function(connection) {
                 break;
 
             case 'connect':
-                console.log("device connected", data.name);
                 if(devices[data.name]) {
-                    sendTo(connection, {
-                        type: "connect",
-                        success: false
-                    });
+                    devices[data.name] = connection;
+                    connection.name = data.name;
+                    connection.type = 'device';
+                    
                 } else {
                     devices[data.name] = connection;
                     connection.name = data.name;
                     connection.type = 'device';
-                    sendTo(connection, {
-                        type: "connect",
-                        success: true
-                    });
                     addDevice(data.name, data.room);
                     console.log("device added: ", data.name);
                 }
+                
                 break;
 
             case 'getdevices':
@@ -72,7 +91,7 @@ wss.on('connection', function(connection) {
             
             case 'toggle':
                 if(data.direction == "todevice") {
-                    let deviceConn = devices[data.device];
+                    let deviceConn = devices[data.devicename];
                                     
                     sendTo(deviceConn, {
                         type: "toggle", 
@@ -113,6 +132,7 @@ wss.on('connection', function(connection) {
 
     connection.on("close", function() {
         if(connection.name) {
+            console.log(connection.type)
             if(connection.type == 'user') {
                 console.log("On Close - deleting user: ", connection.name);
                 for(let i=0; i < devices.length; i++) {
@@ -122,13 +142,27 @@ wss.on('connection', function(connection) {
                     });    
                 }
                 delete users[connection.name];  
-            } else if(connection.type == 'device') {
+            } if(connection.type == 'device') {
                 console.log("On Close - deleting device", connection.name);
+                // Remove all devices related to this user
+                for (let deviceKey in devices) {
+                    let dconn = devices[deviceKey];
+                    if (dconn.name === connection.name) {
+                        // Optionally send a command to the device                        
+                        delete devices[deviceKey]; // Delete the device from the devices object
+                    }
+                }
                 delete devices[connection.name]; 
-            }                    
+            } 
+           // clearInterval(interval);                   
          }        
-     });  
+     });
+
+     connection.on('pong', () => handlePing(connection));
 });
+
+// Log server start
+console.log('WebSocket server started on ws://localhost:4444');
 
 function sendTo(connection, message) {
     connection.send(JSON.stringify(message));
@@ -155,3 +189,4 @@ function addDevice(name, room) {
     };
     counter++; 
 }
+
