@@ -8,8 +8,8 @@
 #include <ArduinoJson.h>
 
 // Configuration
-const char* ssid = ""; // Enter SSID
-const char* password = ""; // Enter Password
+const char* ssid = "Rm117"; // Enter SSID
+const char* password = "Huskies1337$"; // Enter Password
 const char* websockets_server_host = "10.0.0.211"; // Enter server address
 const uint16_t websockets_server_port = 4444; // Enter server port
 const char* hostname = "ESP32_1"; //set device name
@@ -212,12 +212,7 @@ void onWebSocketEvent(WebsocketsEvent event, String data) {
         case WebsocketsEvent::ConnectionClosed:
             Serial.println("WebSocket connection closed.");
             connected = false;
-            reconnectWebSocket()
-            break;
-        case WebsocketsEvent::ConnectionError:
-            Serial.println("WebSocket connection error.");
-            connected = false;
-            reconnectWebSocket()
+            reconnectWebSocket();
             break;
         default:
             Serial.println("WebSocket event: " + data);
