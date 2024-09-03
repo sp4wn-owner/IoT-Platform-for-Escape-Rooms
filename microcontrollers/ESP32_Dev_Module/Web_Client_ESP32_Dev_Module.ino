@@ -13,7 +13,7 @@ const char* room = "room1"; //set room
 using namespace websockets;
 
 // GPIO pins to control
-const int gpioPins[] = {2,4,5,12,13,14,15,18,19,21,22,23,25,26,27,32,33,34,35,36,39};  // Example array of GPIO pins
+const int gpioPins[] = {2,4,5,12,14,15,18,19,21,22,23};  // Example array of GPIO pins
 const int numPins = sizeof(gpioPins) / sizeof(gpioPins[0]);
 
 WebsocketsClient client;
