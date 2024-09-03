@@ -117,21 +117,7 @@ wss.on('connection', function(connection) {
                 }
                   
                 break;    
-            
-            case 'toggleresult':
-                let yourConn = users[data.name];
-
-                if(checked === true) {                    
-                    sendTo(yourConn, {
-                        type: "toggle",                  
-                        state: data.state,
-                        device: data.devicename,
-                        pin: data.pin,
-                        id: data.id
-                    });     
-                }  
-
-                break;             
+                 
         }
     });
 
