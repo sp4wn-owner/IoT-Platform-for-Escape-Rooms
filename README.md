@@ -1,0 +1,1 @@
+This platform allows for quick deployment and control of ESP32 microcontrollers. Run server.js locally (I'm using a Raspberry Pi). Copy ESP32_Web_Client code into your Arduino IDE and update the Wifi settings, device name, and room number.  
