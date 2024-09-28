@@ -21,43 +21,61 @@ let room2devices = document.getElementById('room2devices');
 let room3devices = document.getElementById('room3devices');
 let deviceinfocontainer = document.querySelectorAll('.device-info-container');
 
-let conn = new WebSocket(url);
+let conn;
+let reconnectAttempts = 0;
+const maxReconnectAttempts = 5;
+const reconnectDelay = 1000;
 
-conn.onopen = function () {
-    console.log("Connected to the server");
- };
- 
-conn.onmessage = function (msg) {
-    console.log("Got message", msg.data);
- 
-    var data = JSON.parse(msg.data);
- 
-    switch(data.type) {
+function connect() {
+    conn = new WebSocket(url);
 
-        case "login":
-            handleLogin(data.success, data.name);
-            break;
-        
-        case "devices":
-            handleDevices(data.devices);
-            break;
-        
-        case "toggle":
-            handleToggle(data.state, data.id);
-            break;         
-       
-        case "leave":
-            handleLeave();
-            break;
+    conn.onopen = () => {
+        console.log('Connected to the server');
+        reconnectAttempts = 0;
+    };
 
-        default:
-            break;
-    }
- };
- 
- conn.onerror = function (err) {
-    console.log("Got error", err);
- };
+    conn.onmessage = function (msg) {
+        console.log("Got message", msg.data);
+     
+        var data = JSON.parse(msg.data);
+     
+        switch(data.type) {
+    
+            case "login":
+                handleLogin(data.success, data.name);
+                break;
+            
+            case "devices":
+                handleDevices(data.devices);
+                break;
+            
+            case "toggle":
+                handleToggle(data.state, data.id);
+                break;         
+           
+            case "leave":
+                handleLeave();
+                break;
+    
+            default:
+                break;
+        }
+     };
+
+    conn.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+
+    conn.onclose = () => {
+        console.log('Connection closed, attempting to reconnect...');
+        if (reconnectAttempts < maxReconnectAttempts) {
+            reconnectAttempts++;
+            setTimeout(connect, reconnectDelay * reconnectAttempts);
+        } else {
+            console.log('Max reconnect attempts reached. Please refresh the page.');
+        }
+    };
+}
 
  function send(message) {
     conn.send(JSON.stringify(message));
@@ -66,6 +84,7 @@ conn.onmessage = function (msg) {
 function init() {
     //loginpage.style.display = "none";
     //toggleroom('room1');
+    connect();
     loginpage.style.display = "block";
     roomscontainer.style.display = "none";
     document.getElementsByTagName('header')[0].style.display = "none";
