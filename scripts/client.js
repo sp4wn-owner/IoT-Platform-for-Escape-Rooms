@@ -1,5 +1,4 @@
 const url = 'ws://10.0.0.211:4444';
-//const url = 'ws://73.52.112.32:4444';
 
 let username;
 let roomname;
@@ -261,8 +260,5 @@ function setToggleState(toggleId, state) {
         toggleButton.checked = state;
     }
 }
-
-function handleLeave() {
-
-}
+//Might need to implement session storage (cookies) to handle client timeouts/re-login
 init();
